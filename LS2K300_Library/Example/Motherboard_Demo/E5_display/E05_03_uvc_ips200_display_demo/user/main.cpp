@@ -67,7 +67,7 @@
 // 如果发现现象与说明严重不符 请参照本文件最下方 例程常见问题说明 进行排查
 //
 // **************************** 代码区域 ****************************
-
+/**/
 zf_device_ips200 ips200;        // 定义2寸IPS SPI屏幕的设备对象，用于屏幕的所有操作
 zf_device_uvc uvc_dev;          // 定义UVC免驱摄像头的设备对象，用于摄像头的所有操作
 uint16 count = 0;               // 帧计数变量，用于控制图像显示模式切换的频率
@@ -77,11 +77,12 @@ uint8  show_flag = 0;           // 显示模式切换标志位：0-显示灰度�
  * @brief 程序主函数，程序入口
  * @return int 程序退出状态码，正常退出返回0，异常返回-1
  */
+
 int main() 
 {
     // 初始化2寸IPS屏幕，传入帧缓冲设备路径，完成屏幕底层驱动、显示区域初始化
-    ips200.init(FB_PATH);
-    
+    ips200.init(FB_PATH,1);
+
     // 初始化UVC免驱摄像头，传入USB摄像头设备路径
     // 初始化返回值小于0表示初始化失败，直接退出程序
     if(uvc_dev.init(UVC_PATH) < 0)
@@ -131,12 +132,12 @@ int main()
                 {
                     // 在屏幕的(0,0)坐标起点，显示灰度图像
                     // 显示尺寸为摄像头采集的标准宽高 UVC_WIDTH * UVC_HEIGHT
-                    ips200.displayimage_gray(gray_image, UVC_WIDTH, UVC_HEIGHT);
+                    ips200.displayimage_gray(gray_image, UVC_WIDTH*1.5, UVC_HEIGHT*1.5);
                 }
             }
         }
         // 短延时10毫秒，降低CPU占用率，同时防止循环执行过快导致的资源抢占问题
-        system_delay_ms(10);
+        //system_delay_ms(10);
     }
     return 0; // 理论上不会执行到这里，主循环为死循环
 }
@@ -158,4 +159,4 @@ int main()
 //      无法完成波形测试则复制一个GPIO例程将屏幕所有IO初始化为GPIO翻转电平 看看是否受控
 //
 // 问题3：摄像头没找到
-//      重新插入UVC摄像头，摄像头支持热插拔。
+//      重新插入UVC摄像头，摄像头支持热插拔。 */

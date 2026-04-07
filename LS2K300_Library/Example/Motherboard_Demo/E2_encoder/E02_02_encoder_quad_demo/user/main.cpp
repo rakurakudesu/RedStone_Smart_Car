@@ -88,8 +88,8 @@ void pit_callback(void)
     encoder_left = encoder_quad_1.get_count();
     encoder_right = encoder_quad_2.get_count();
     // 定时器清零
-    encoder_quad_1.clear_count();
-    encoder_quad_2.clear_count();
+    //encoder_quad_1.clear_count();
+    //encoder_quad_2.clear_count();
 }
 
 int main(int, char**) 
@@ -98,7 +98,8 @@ int main(int, char**)
     // 创建一个定时器10ms周期，回调函数为pit_callback
     zf_driver_pit pit_timer;
     pit_timer.init_ms(10, pit_callback);
-
+    encoder_quad_1.clear_count();
+    encoder_quad_2.clear_count();
     while(1)
     {
         // 此处编写需要循环执行的代码

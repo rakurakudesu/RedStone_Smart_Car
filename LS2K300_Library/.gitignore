@@ -1,1 +1,29 @@
+cat > .gitignore << 'EOF'
+# ================= CMake 构建产物 =================
+build/
+bin/
+lib/
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.log
+CMakeFiles/
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+*.cmake
+progress.marks
+
+# ================= IDE / 编辑器 =================
 .vscode/
+.idea/
+*.swp
+*.swo
+
+# ================= 临时文件 =================
+*.tmp
+*.bak
+EOF
