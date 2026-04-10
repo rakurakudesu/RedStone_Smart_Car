@@ -1,0 +1,15 @@
+build/
+out/
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+.vscode/
+CMakeFiles/
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+*.tmp
+*.bak

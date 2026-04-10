@@ -41,7 +41,7 @@ void line_follow_pid_control(void)
     float target_angle = PD_Outer_Calculate(&Outer_PD, line_error, 0.0f);
 
     // ===================== 2. 内环：陀螺仪角度 → 转向差速 =====================
-    float current_angle = get_gyro_yaw();  // 替换为你的陀螺仪航向角函数
+    float current_angle = eulerAngle.yaw;  // 替换为你的陀螺仪航向角函数
     float steer = PD_Inner_Calculate(&Inner_PD, current_angle, target_angle);
 
     // ===================== 3. 速度环：编码器 → 稳定前进速度 =====================
@@ -50,7 +50,7 @@ void line_follow_pid_control(void)
     float speed_out = PD_Outer_Calculate(&Speed_PD, current_speed, target_speed);
 
     // ===================== 4. 电机速度合成 =====================
-    int base_speed = 30 + (int)speed_out;  // 基础速度 + 速度环修正
+    int base_speed = BASE_SPEED + (int)speed_out;  // 基础速度 + 速度环修正
     int left_speed  = base_speed + (int)steer;
     int right_speed = base_speed - (int)steer;
 

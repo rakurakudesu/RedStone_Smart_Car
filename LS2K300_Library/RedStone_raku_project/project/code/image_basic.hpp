@@ -28,6 +28,7 @@ typedef unsigned           int uint32;
 #define border_min	1	//边界最小值	
 extern uint8 original_image[IMAGE_H][IMAGE_W];
 extern uint8 bin_image[IMAGE_H][IMAGE_W];//图像数组
+extern uint8 center_line[IMAGE_H];//中线数组
 
 void image_process(void); //直接在中断或循环里调用此程序就可以循环执行了
 int16 limit_a_b(int16 x, int a, int b);

@@ -1,5 +1,10 @@
 #include "zf_common_headfile.hpp"
 
+// 串级PD实例：外环（寻迹偏差→目标角度）、内环（角度偏差→电机差速）
+  PD_TypeDef OuterPD;  // 外环PD（寻迹偏差）
+  PD_TypeDef InnerPD;  // 内环PD（角度偏差）
+  PD_TypeDef SpeedPD;  // 内环PD（角度偏差）
+
 // PD初始化
 void PD_Init(PD_TypeDef *pd, float Kp, float Kd, float output_limit) 
 	{
