@@ -105,6 +105,10 @@
 #include "image_elements.hpp"
 #include "motor.hpp"
 #include "encoder.hpp"
+#include "pid.hpp"
+#include "MahonyAHRS.hpp"
+#include "control.hpp"
+
 
 
 

@@ -39,7 +39,13 @@ zf_driver_pit system_pit;
 // 10ms中断
 void system_pit_callback(void)
 {
-    encoder_update();  // 编码器计算
+    Mahony_update();
+    if (Is_Mahony_Ready()) 
+    {
+        //line_follow_pid_control();
+        encoder_update();  // 编码器计算
+    }
+
 }
 
 int main(int, char**) 
@@ -52,6 +58,10 @@ int main(int, char**)
         return -1;
     }
 
+    imu_dev.init();
+    Mahony_Init(100);
+    motor_Init();
+    
 //******************************pit中断配置**********************************
 
     system_pit.init_ms(10, system_pit_callback);
@@ -62,29 +72,43 @@ int main(int, char**)
     PD_Init(&Speed_PD,  1.2f,  0.5f,  25);    // 速度环     Kp小 Kd小
 
 //******************************主循环**********************************
-    while(1)
+ while(1)
+{
+    if (Is_Mahony_Ready()) 
     {
-/*         if(uvc_dev.wait_image_refresh() == 0)
-        {
-            //system_delay_ms(100);
-            image_process();
-        } */
+            while(1)
+            {
 
-        float v_left  = get_left_speed_mps();
-        float v_right = get_right_speed_mps();
-        float dist_left = get_left_distance();
-        float dist_right = get_right_distance();
-        float a_left  = get_left_accel();
-        float a_right = get_right_accel();
+                if(uvc_dev.wait_image_refresh() == 0)
+                {
+                    //system_delay_ms(100);
+                    //image_process();
+                } 
 
-        // 打印
-        printf("=========================================\r\n");
-        printf("速度L：%.3f m/s      R：%.3f m/s\r\n", v_left, v_right);
-        printf("里程L：%.4f 米      R：%.4f 米\r\n", dist_left, dist_right);
-        printf("加速度L：%.2f m/s²   R：%.2f m/s²\r\n", a_left, a_right);
-        printf("=========================================\r\n\r\n");
+                /* float v_left  = get_left_speed_mps();
+                float v_right = get_right_speed_mps();
+                float dist_left = get_left_distance();
+                float dist_right = get_right_distance();
+                float a_left  = get_left_accel();
+                float a_right = get_right_accel();
 
-        system_delay_ms(200);
+                // 打印
+                printf("=========================================\r\n");
+                printf("速度L：%.3f m/s      R：%.3f m/s\r\n", v_left, v_right);
+                printf("里程L：%.4f 米      R：%.4f 米\r\n", dist_left, dist_right);
+                printf("加速度L：%.2f m/s²   R：%.2f m/s²\r\n", a_left, a_right);
+                printf("=========================================\r\n\r\n");
+
+                system_delay_ms(200); */
+                
+                printf("=====================================\r\n");
+                printf("Roll   = %.2f °\r\n", eulerAngle.roll);    // 横滚
+                printf("Pitch  = %.2f °\r\n", eulerAngle.pitch);   // 俯仰
+                printf("Yaw    = %.2f °\r\n", eulerAngle.yaw);     // 偏航
+                printf("=====================================\r\n\r\n"); 
+
+                system_delay_ms(100);
+            }
     }
-    
+ } 
 }
