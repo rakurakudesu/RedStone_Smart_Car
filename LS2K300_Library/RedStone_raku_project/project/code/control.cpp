@@ -47,7 +47,8 @@ void line_follow_pid_control(void)
     // ===================== 3. 速度环：编码器 → 稳定前进速度 =====================
     float target_speed = 0.35f;  // 目标前进速度 m/s
     float current_speed = (get_left_speed_mps() + get_right_speed_mps()) / 2.0f;
-    float speed_out = PD_Outer_Calculate(&Speed_PD, current_speed, target_speed);
+ // float speed_out = PD_Outer_Calculate(&Speed_PD, current_speed, target_speed);
+    float speed_out =0.0;
 
     // ===================== 4. 电机速度合成 =====================
     int base_speed = BASE_SPEED + (int)speed_out;  // 基础速度 + 速度环修正
@@ -55,8 +56,8 @@ void line_follow_pid_control(void)
     int right_speed = base_speed - (int)steer;
 
     // ===================== 5. 限幅（防止超范围） =====================
-    left_speed  = constrain(left_speed,  -50, 50);
-    right_speed = constrain(right_speed, -50, 50);
+    left_speed  = constrain(left_speed,  -10, 10);
+    right_speed = constrain(right_speed, -10, 10);
 
     // ===================== 6. 输出到电机 =====================
     set_left_speed(left_speed);

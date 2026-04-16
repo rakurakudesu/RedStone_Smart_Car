@@ -245,7 +245,7 @@ example：
 	search_l_r((uint16)USE_num,image,&data_stastics_l, &data_stastics_r,start_point_l[0],
 				start_point_l[1], start_point_r[0], start_point_r[1],&hightest);
  */
-#define USE_num	IMAGE_H*3	//定义找点的数组成员个数按理说300个点能放下，但是有些特殊情况确实难顶，多定义了一点
+#define USE_num	IMAGE_H*300	//定义找点的数组成员个数按理说300个点能放下，但是有些特殊情况确实难顶，多定义了一点
 
  //存放点的x，y坐标
 uint16 points_l[(uint16)USE_num][2] = { {  0 } };//左线

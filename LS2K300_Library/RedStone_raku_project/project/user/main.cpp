@@ -42,7 +42,7 @@ void system_pit_callback(void)
     Mahony_update();
     if (Is_Mahony_Ready()) 
     {
-        //line_follow_pid_control();
+        line_follow_pid_control();
         encoder_update();  // 编码器计算
     }
 
@@ -67,8 +67,8 @@ int main(int, char**)
     system_pit.init_ms(10, system_pit_callback);
 
 //******************************pid参数配置**********************************
-    PD_Init(&Outer_PD,  0.8f,  2.5f,  25);    // 图像→角度  Kp小 Kd大
-    PD_Init(&Inner_PD,  6.0f,  12.0f, 40);    // 角度→电机  Kp大 Kd中
+    PD_Init(&Outer_PD,  0.08f,  2.5f,  25);    // 图像→角度  Kp小 Kd大
+    PD_Init(&Inner_PD,  0.06f,  1.0f, 40);    // 角度→电机  Kp大 Kd中
     PD_Init(&Speed_PD,  1.2f,  0.5f,  25);    // 速度环     Kp小 Kd小
 
 //******************************主循环**********************************
@@ -82,7 +82,7 @@ int main(int, char**)
                 if(uvc_dev.wait_image_refresh() == 0)
                 {
                     //system_delay_ms(100);
-                    //image_process();
+                    image_process();
                 } 
 
                 /* float v_left  = get_left_speed_mps();
