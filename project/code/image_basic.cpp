@@ -355,16 +355,22 @@ void search_l_r(uint16 break_flag, uint8(*image)[IMAGE_W], uint16 *l_stastic, ui
 			}
 
 		}
-		if ((points_r[r_data_statics][0]== points_r[r_data_statics-1][0]&& points_r[r_data_statics][0] == points_r[r_data_statics - 2][0]
-			&& points_r[r_data_statics][1] == points_r[r_data_statics - 1][1] && points_r[r_data_statics][1] == points_r[r_data_statics - 2][1])
-			||(points_l[l_data_statics-1][0] == points_l[l_data_statics - 2][0] && points_l[l_data_statics-1][0] == points_l[l_data_statics - 3][0]
-				&& points_l[l_data_statics-1][1] == points_l[l_data_statics - 2][1] && points_l[l_data_statics-1][1] == points_l[l_data_statics - 3][1]))
+		if ((r_data_statics >= 2
+			&& points_r[r_data_statics][0] == points_r[r_data_statics - 1][0]
+			&& points_r[r_data_statics][0] == points_r[r_data_statics - 2][0]
+			&& points_r[r_data_statics][1] == points_r[r_data_statics - 1][1]
+			&& points_r[r_data_statics][1] == points_r[r_data_statics - 2][1])
+			|| (l_data_statics >= 3
+				&& points_l[l_data_statics - 1][0] == points_l[l_data_statics - 2][0]
+				&& points_l[l_data_statics - 1][0] == points_l[l_data_statics - 3][0]
+				&& points_l[l_data_statics - 1][1] == points_l[l_data_statics - 2][1]
+				&& points_l[l_data_statics - 1][1] == points_l[l_data_statics - 3][1]))
 		{
 			//printf("三次进入同一个点，退出\n");
 			break;
 		}
 		if (my_abs(points_r[r_data_statics][0] - points_l[l_data_statics - 1][0]) < 2
-			&& my_abs(points_r[r_data_statics][1] - points_l[l_data_statics - 1][1] < 2)
+			&& my_abs(points_r[r_data_statics][1] - points_l[l_data_statics - 1][1]) < 2
 			)
 		{
 			//printf("\n左右相遇退出\n");	
@@ -677,5 +683,4 @@ ips200.displayimage_gray(gray_image, UVC_WIDTH, UVC_HEIGHT);
 y值最大*******************************************(188.120)
 
 */
-
 
