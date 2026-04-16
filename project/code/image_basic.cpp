@@ -378,7 +378,7 @@ void search_l_r(uint16 break_flag, uint8(*image)[IMAGE_W], uint16 *l_stastic, ui
 			//printf("\n在y=%d处退出\n",*hightest);
 			break;
 		}
-		if ((points_r[r_data_statics][1] < points_l[l_data_statics - 1][1]))
+		if ((points_r[r_data_statics][1] > points_l[l_data_statics - 1][1]))
 		{
 			printf("\n如果左边比右边高了，左边等待右边\n");	
 			continue;//如果左边比右边高了，左边等待右边
