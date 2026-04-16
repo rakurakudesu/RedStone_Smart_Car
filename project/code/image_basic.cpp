@@ -108,7 +108,7 @@ uint8 otsuThreshold(uint8 *image, uint16 col, uint16 row)
 
 
     for (MinValue = 0; MinValue < 256 && HistGram[MinValue] == 0; MinValue++) ;        //获取最小灰度的值
-    for (MaxValue = 255; MaxValue > MinValue && HistGram[MinValue] == 0; MaxValue--) ; //获取最大灰度的值
+    for (MaxValue = 255; MaxValue > MinValue && HistGram[MaxValue] == 0; MaxValue--) ; //获取最大灰度的值
 
     if (MaxValue == MinValue)
     {
