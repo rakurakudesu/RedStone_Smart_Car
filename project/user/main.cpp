@@ -42,7 +42,6 @@ void system_pit_callback(void)
     Mahony_update();
     if (Is_Mahony_Ready()) 
     {
-        line_follow_pid_control();
         encoder_update();  // 编码器计算
     }
 
@@ -83,6 +82,7 @@ int main(int, char**)
                 {
                     //system_delay_ms(100);
                     image_process();
+                    line_follow_pid_control();
                 } 
 
                 /* float v_left  = get_left_speed_mps();
