@@ -19,14 +19,22 @@
 - 摄像头：USB 摄像头
 
 ## 项目结构
-RedStone_Smart_Car
+RedStone_Smart_Car  
+
 │   ├── model/       # 推理模型定义  
-│   ├── out/         # 输出目录  
-│   └── user/        # 用户相关配置/代码  
-├── build.sh         # 构建脚本  
-├── CMakeLists.txt   # CMake 配置文件 
-├── cross.cmake      # 交叉编译配置  
-└── main.cpp         # 主程序入口  
+
+│   ├── out/         # 输出目录    
+
+│   └── user/        # 用户相关配置/代码   
+
+├── build.sh         # 构建脚本    
+
+├── CMakeLists.txt   # CMake 配置文件   
+
+├── cross.cmake      # 交叉编译配置    
+
+└── main.cpp         # 主程序入口    
+
 ## 代码简析
 code/文件夹中有如下文件
 ### image_basic.cpp
