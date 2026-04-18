@@ -19,7 +19,12 @@
 - 摄像头：USB 摄像头
 
 ## 项目结构
-RedStone_Smart_Car  
+RedStone_Smart_Car 
+├── libraries/   # zf库     
+
+├── project/     # 项目   
+
+│   ├── code/        # 自有代码    
 
 │   ├── model/       # 推理模型定义  
 
