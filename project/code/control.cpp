@@ -52,8 +52,8 @@ void line_follow_pid_control(void)
 
     // ===================== 4. 电机速度合成 =====================
     int base_speed = BASE_SPEED + (int)speed_out;  // 基础速度 + 速度环修正
-    int left_speed  = base_speed + (int)target_angle*100;
-    int right_speed = base_speed - (int)target_angle*100;
+    int left_speed  = base_speed + (int)target_angle*60;
+    int right_speed = base_speed - (int)target_angle*60;
 
     // ===================== 5. 限幅（防止超范围） =====================
     left_speed  = constrain(left_speed,  -10, 10);
