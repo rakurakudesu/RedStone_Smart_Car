@@ -101,13 +101,13 @@ int main(int, char**)
 
                 system_delay_ms(200); */
                 
-                printf("=====================================\r\n");
+/*                 printf("=====================================\r\n");
                 printf("Roll   = %.2f °\r\n", eulerAngle.roll);    // 横滚
                 printf("Pitch  = %.2f °\r\n", eulerAngle.pitch);   // 俯仰
                 printf("Yaw    = %.2f °\r\n", eulerAngle.yaw);     // 偏航
-                printf("=====================================\r\n\r\n"); 
-
-                system_delay_ms(100);
+                printf("=====================================\r\n\r\n");  */
+            
+                system_delay_ms(10);
             }
     }
  } 
