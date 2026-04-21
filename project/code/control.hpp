@@ -7,7 +7,7 @@ extern PD_TypeDef  Speed_PD;    // 速度环：编码器 → 稳定速度
 
 void line_follow_pid_control(void);
 #define CENTER_X (IMAGE_W / 2)
-#define BASE_SPEED 10
+#define BASE_SPEED 30
 
 
 #endif 
