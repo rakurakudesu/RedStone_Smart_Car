@@ -1,5 +1,5 @@
 #include "zf_common_headfile.hpp"
-
+/*
 //-------------------------------------------------------------------------------------------
 float twoKi;
 float q0, q1, q2, q3;
@@ -14,7 +14,7 @@ int16 imu_mag_x = 0,imu_mag_y = 0,imu_mag_z = 0;
 icm_param_t icm_data;
 euler_param_t eulerAngle;
 
-zf_device_imu imu_dev;
+
 
 #define twoKpDef	(2.0f * 1.0f)
 #define twoKiDef	(2.0f * 0.0f)
@@ -302,3 +302,4 @@ uint8_t Is_Mahony_Ready(void)
 {
     return mahony_is_calibrated;
 }
+*/

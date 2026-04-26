@@ -1,3 +1,4 @@
+/*
 #ifndef __MAHONYAHRS_H
 #define __MAHONYAHRS_H
 
@@ -34,3 +35,4 @@ void Mahony_Manual_ResetZero(void);
 uint8_t Is_Mahony_Ready(void);
 
 #endif
+*/
