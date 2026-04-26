@@ -66,9 +66,9 @@ int main(int, char**)
     system_pit.init_ms(10, system_pit_callback);
 
 //******************************pid参数配置**********************************
-    PD_Init(&Outer_PD,  1.8f,  0.0f,  100.0f);    // 图像→角度  Kp小 Kd大
-    PD_Init(&Inner_PD,  0.06f,  1.0f, 40);    // 角度→电机  Kp大 Kd中
-    PD_Init(&Speed_PD,  1.2f,  0.5f,  25);    // 速度环     Kp小 Kd小
+    PD_Init(&Outer_PD,  2.0f,  1.5f,  100.0f);    // 图像→角度  Kp小 Kd大
+    PD_Init(&Inner_PD,  1.0f,  2.0f, 100.0f);    // 角度→电机  Kp大 Kd中
+    PD_Init(&Speed_PD,  0.5f,  1.0f,  25);    // 速度环     Kp小 Kd小
 
 //******************************主循环**********************************
  while(1)
@@ -99,13 +99,14 @@ int main(int, char**)
                 printf("加速度L：%.2f m/s²   R：%.2f m/s²\r\n", a_left, a_right);
                 printf("=========================================\r\n\r\n");
 
-                system_delay_ms(200); */
-                
-/*                 printf("=====================================\r\n");
-                printf("Roll   = %.2f °\r\n", eulerAngle.roll);    // 横滚
-                printf("Pitch  = %.2f °\r\n", eulerAngle.pitch);   // 俯仰
-                printf("Yaw    = %.2f °\r\n", eulerAngle.yaw);     // 偏航
-                printf("=====================================\r\n\r\n");  */
+                system_delay_ms(200); */               
+  //              printf("=====================================\r\n");
+  //              printf("Roll   = %.2f °\r\n", eulerAngle.roll);    // 横滚
+ //               printf("Pitch  = %.2f °\r\n", eulerAngle.pitch);   // 俯仰
+  //              printf("Yaw    = %.2f °\r\n", eulerAngle.yaw);     // 偏航
+   //             printf("=====================================\r\n\r\n");  
+ //  printf("steer:%f",get_steer());
+ //  printf("target_angle:%f",get_target_angle());
             }
     }
  } 

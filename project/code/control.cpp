@@ -33,33 +33,47 @@ float get_center_error(void)
     // 误差 = 中心 - 当前中线（正=偏右，负=偏左）
     return (float)(CENTER_X - avg_mid);
 }
+float steer1,target_angle1;
 
 void line_follow_pid_control(void)
 {
     // ===================== 1. 外环：图像偏差 → 目标角度 =====================
     float line_error = get_center_error();
     float target_angle = PD_Outer_Calculate(&Outer_PD, line_error, 0.0f);
-
+    target_angle1=target_angle;
     // ===================== 2. 内环：陀螺仪角度 → 转向差速 =====================
+    if(target_angle==0)
+    {
+        eulerAngle.yaw=0;
+    }
     float current_angle = eulerAngle.yaw;  // 替换为你的陀螺仪航向角函数
-    float steer = PD_Inner_Calculate(&Inner_PD, current_angle, target_angle);
-
+    float steer = PD_Outer_Calculate(&Inner_PD, current_angle, target_angle);
+    steer1=steer;
     // ===================== 3. 速度环：编码器 → 稳定前进速度 =====================
     float target_speed = 0.35f;  // 目标前进速度 m/s
     float current_speed = (get_left_speed_mps() + get_right_speed_mps()) / 2.0f;
- // float speed_out = PD_Outer_Calculate(&Speed_PD, current_speed, target_speed);
-    float speed_out =0.0;
+    float speed_out = PD_Outer_Calculate(&Speed_PD, current_speed, target_speed);
 
     // ===================== 4. 电机速度合成 =====================
     int base_speed = BASE_SPEED + (int)speed_out;  // 基础速度 + 速度环修正
-    int left_speed  = base_speed + (int)target_angle;
-    int right_speed = base_speed - (int)target_angle;
+    int left_speed  = base_speed + (int)steer;
+    int right_speed = base_speed - (int)steer;
 
     // ===================== 5. 限幅（防止超范围） =====================
-    left_speed  = constrain(left_speed,  -10, 10);
-    right_speed = constrain(right_speed, -10, 10);
+    left_speed  = constrain(left_speed,  -20, 20);
+    right_speed = constrain(right_speed, -20, 20);
 
     // ===================== 6. 输出到电机 =====================
     set_left_speed(left_speed);
     set_right_speed(right_speed);
+}
+
+float get_steer(void)
+{
+    return steer1;
+}
+
+float get_target_angle(void)
+{
+    return target_angle1;
 }

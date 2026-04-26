@@ -196,7 +196,7 @@ uint8 get_start_point(uint8 start_row)
 		start_point_l[1] = start_row;//y
 		if (bin_image[start_row][i] == 255 && bin_image[start_row][i - 1] == 0)
 		{
-			printf("找到左边起点image[%d][%d]\n", start_row,i);
+			//printf("找到左边起点image[%d][%d]\n", start_row,i);
 			l_found = 1;
 			break;
 		}
@@ -208,7 +208,7 @@ uint8 get_start_point(uint8 start_row)
 		start_point_r[1] = start_row;//y
 		if (bin_image[start_row][i] == 255 && bin_image[start_row][i + 1] == 0)
 		{
-			printf("找到右边起点image[%d][%d]\n",start_row, i);
+			//printf("找到右边起点image[%d][%d]\n",start_row, i);
 			r_found = 1;
 			break;
 		}
@@ -216,7 +216,7 @@ uint8 get_start_point(uint8 start_row)
 
 	if(l_found&&r_found)return 1;
 	else {
-		printf("未找到起点\n");
+		//printf("未找到起点\n");
 		return 0;
 	} 
 }
@@ -301,7 +301,7 @@ void search_l_r(uint16 break_flag, uint8(*image)[IMAGE_W], uint16 *l_stastic, ui
 		// 数组边界防护，放在while循环内部最前面
 		if (r_data_statics >= USE_num - 1 || l_data_statics >= USE_num - 1)
 		{
-			printf("数组即将溢出！r_data_statics=%d, l_data_statics=%d\n", r_data_statics, l_data_statics);
+			//printf("数组即将溢出！r_data_statics=%d, l_data_statics=%d\n", r_data_statics, l_data_statics);
 		    r_data_statics = 0;  
             l_data_statics = 0;
 			break; // 强制退出循环
@@ -368,34 +368,34 @@ void search_l_r(uint16 break_flag, uint8(*image)[IMAGE_W], uint16 *l_stastic, ui
 			||(points_l[l_data_statics-1][0] == points_l[l_data_statics - 2][0] && points_l[l_data_statics-1][0] == points_l[l_data_statics - 3][0]
 				&& points_l[l_data_statics-1][1] == points_l[l_data_statics - 2][1] && points_l[l_data_statics-1][1] == points_l[l_data_statics - 3][1]))
 		{
-			printf("三次进入同一个点，退出\n");
+			//printf("三次进入同一个点，退出\n");
 			break;
 		}
 		if (my_abs(points_r[r_data_statics][0] - points_l[l_data_statics - 1][0]) < 2
-			&& my_abs(points_r[r_data_statics][1] - points_l[l_data_statics - 1][1] < 2)
+			&& my_abs(points_r[r_data_statics][1] - points_l[l_data_statics - 1][1]) < 2
 			)
 		{
-			printf("\n左右相遇退出\n");	
+			//printf("\n左右相遇退出\n");	
 			*hightest = (points_r[r_data_statics][1] + points_l[l_data_statics - 1][1]) >> 1;//取出最高点
-			printf("\n在y=%d处退出\n",*hightest);
+			//printf("\n在y=%d处退出\n",*hightest);
 			break;
 		}
 
-/* 		if ((points_r[r_data_statics][1] < points_l[l_data_statics - 1][1]))
+ 		if ((points_r[r_data_statics][1] < points_l[l_data_statics - 1][1]))
 		{
-			printf("\n如果左边比右边高了，左边等待右边\n");	
+			//printf("\n如果左边比右边高了，左边等待右边\n");	
 			continue;//如果左边比右边高了，左边等待右边
-		} */
-
-			if (dir_l[l_data_statics - 1] == 7
-			&& (points_r[r_data_statics][1] > points_l[l_data_statics - 1][1])
-			&& l_data_statics > 1)  // 🔥 新增：禁止回退到0以下，杜绝无限死循环
+		} 
+ 		if (dir_l[l_data_statics - 1] == 7
+					&& (points_r[r_data_statics][1] > points_l[l_data_statics - 1][1]))//左边比右边高且已经向下生长了
 		{
-			center_point_l[0] = points_l[l_data_statics - 1][0];
-			center_point_l[1] = points_l[l_data_statics - 1][1];
+			//printf("\n左边开始向下了，等待右边，等待中... \n");
+			center_point_l[0] = points_l[l_data_statics - 1][0];//x
+			center_point_l[1] = points_l[l_data_statics - 1][1];//y
 			l_data_statics--;
-		}
+		} 
 		r_data_statics++;//索引加一
+
 
 		index_r = 0;//先清零，后使用
 		for (i = 0; i < 8; i++)
@@ -579,7 +579,7 @@ void image_draw_rectan(uint8(*image)[IMAGE_W])
 	{
 		image[0][i] = 0;
 		image[1][i] = 0;
-		//image[IMAGE_H-1][i] = 0;
+		image[IMAGE_H-1][i] = 0;
 
 	}
 }
@@ -613,14 +613,29 @@ data_stastics_l = 0;
 data_stastics_r = 0;
 if (get_start_point(IMAGE_H - 2))//找到起点了，再执行八领域，没找到就一直找
 {
-	printf("正在开始八领域\n");
+	//printf("正在开始八领域\n");
 	search_l_r((uint16)USE_num, bin_image, &data_stastics_l, &data_stastics_r, start_point_l[0], start_point_l[1], start_point_r[0], start_point_r[1], &hightest);
-	printf("八邻域已结束\n");
+	//printf("八邻域已结束\n");
 	// 从爬取的边界线内提取边线 ， 这个才是最终有用的边线
 	get_left(data_stastics_l);
 	get_right(data_stastics_r);
 	//处理函数放这里，不要放到if外面去了，不要放到if外面去了，不要放到if外面去了，重要的事说三遍
+	// 补线函数调用（防护空数据）
+/* 				cross_fill(
+					bin_image,          
+					l_border,           
+					r_border,           
+					data_stastics_l,    
+					data_stastics_r,    
+					dir_l,              
+					dir_r,              
+					points_l,           
+					points_r            
+				); */
 
+}
+else{
+	//printf("没找到起点");
 }
 
 

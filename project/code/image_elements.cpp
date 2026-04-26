@@ -110,9 +110,9 @@ void cross_fill(uint8(*image)[IMAGE_W], uint8 *l_border, uint8 *r_border, uint16
 		if (dir_l[i - 1] == 4 && dir_l[i] == 4 && dir_l[i + 3] == 6 && dir_l[i + 5] == 6 && dir_l[i + 7] == 6)
 		{
 			break_num_l = points_l[i][1];//传递y坐标
-			printf("brea_knum-L:%d\n", break_num_l);
-			printf("I:%d\n", i);
-			printf("十字标志位：1\n");
+			//printf("brea_knum-L:%d\n", break_num_l);
+			//printf("I:%d\n", i);
+			//printf("十字标志位：1\n");
 			break;
 		}
 	}
@@ -121,9 +121,9 @@ void cross_fill(uint8(*image)[IMAGE_W], uint8 *l_border, uint8 *r_border, uint16
 		if (dir_r[i - 1] == 4 && dir_r[i] == 4 && dir_r[i + 3] == 6 && dir_r[i + 5] == 6 && dir_r[i + 7] == 6)
 		{
 			break_num_r = points_r[i][1];//传递y坐标
-			printf("brea_knum-R:%d\n", break_num_r);
-			printf("I:%d\n", i);
-			printf("十字标志位：1\n");
+			//printf("brea_knum-R:%d\n", break_num_r);
+			//printf("I:%d\n", i);
+			//printf("十字标志位：1\n");
 			break;
 		}
 	}
