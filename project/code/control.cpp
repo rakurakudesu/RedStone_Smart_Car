@@ -1,9 +1,6 @@
 #include "zf_common_headfile.hpp"
 
-// 串级PID + 速度环
-PD_TypeDef  Outer_PD;    // 外环：图像中线误差 → 目标角度
-PD_TypeDef  Inner_PD;    // 内环：陀螺仪角度 → 转向差速
-PD_TypeDef  Speed_PD;    // 速度环：编码器 → 稳定速度
+zf_device_imu imu_dev;
 
 // 限幅函数
 int constrain(int val, int min_val, int max_val)
@@ -39,23 +36,19 @@ void line_follow_pid_control(void)
 {
     // ===================== 1. 外环：图像偏差 → 目标角度 =====================
     float line_error = get_center_error();
-    float target_angle = PD_Outer_Calculate(&Outer_PD, line_error, 0.0f);
+    float target_angle = PID_Positional_Calculate(&TracePID, line_error, 0.0f);
     target_angle1=target_angle;
     // ===================== 2. 内环：陀螺仪角度 → 转向差速 =====================
-    if(target_angle==0)
-    {
-        eulerAngle.yaw=0;
-    }
-    float current_angle = eulerAngle.yaw;  // 替换为你的陀螺仪航向角函数
-    float steer = PD_Outer_Calculate(&Inner_PD, current_angle, target_angle);
+    float current_angle = imu_dev.get_gyro_z()*0.001f;  // 替换为你的陀螺仪航向角函数
+    float steer = PID_Positional_Calculate(&AnglePID, current_angle, target_angle);
     steer1=steer;
     // ===================== 3. 速度环：编码器 → 稳定前进速度 =====================
     float target_speed = 0.35f;  // 目标前进速度 m/s
     float current_speed = (get_left_speed_mps() + get_right_speed_mps()) / 2.0f;
-    float speed_out = PD_Outer_Calculate(&Speed_PD, current_speed, target_speed);
+    float speed_out = PID_Incremental_Calculate(&SpeedPID, current_speed, target_speed);
 
     // ===================== 4. 电机速度合成 =====================
-    int base_speed = BASE_SPEED + (int)speed_out;  // 基础速度 + 速度环修正
+    int base_speed = BASE_SPEED ;  // 基础速度 + 速度环修正
     int left_speed  = base_speed + (int)steer;
     int right_speed = base_speed - (int)steer;
 

@@ -1,5 +1,6 @@
-#ifndef __MAHONYAHRS_H
-#define __MAHONYAHRS_H
+/*
+#ifndef __MAHONYAHRS_HPP
+#define __MAHONYAHRS_HPP
 
 // 传感器数据结构体
 typedef struct
@@ -34,3 +35,4 @@ void Mahony_Manual_ResetZero(void);
 uint8_t Is_Mahony_Ready(void);
 
 #endif
+*/

@@ -1,70 +1,85 @@
 #include "zf_common_headfile.hpp"
 
-// 串级PD实例：外环（寻迹偏差→目标角度）、内环（角度偏差→电机差速）
-  PD_TypeDef OuterPD;  // 外环PD（寻迹偏差）
-  PD_TypeDef InnerPD;  // 内环PD（角度偏差）
-  PD_TypeDef SpeedPD;  // 内环PD（角度偏差）
+PID_TypeDef TracePID; 
+PID_TypeDef AnglePID;
+PID_TypeDef SpeedPID;   
 
-// PD初始化
-void PD_Init(PD_TypeDef *pd, float Kp, float Kd, float output_limit) 
-	{
-    pd->Kp = Kp;
-    pd->Kd = Kd;
-    pd->output_limit = output_limit;
-    pd->error = pd->last_error = pd->prev_error = pd->output = 0.0f;
+// PID初始化
+void PID_Init(PID_TypeDef *pid, float Kp, float Ki, float Kd, float output_limit, float integral_limit)
+{
+    pid->Kp = Kp;
+    pid->Ki = Ki;
+    pid->Kd = Kd;
+    pid->output_limit = output_limit;
+    pid->integral_limit = integral_limit;
+
+    pid->error = 0.0f;
+    pid->last_error = 0.0f;
+    pid->prev_error = 0.0f;
+    pid->integral = 0.0f;
+    pid->output = 0.0f;
 }
 
-// 增量式PD计算
-float PD_Inner_Calculate(PD_TypeDef *pd, float feedback, float setpoint)
+//==================== 增量式 PID（内环：电机/角度控制）====================
+float PID_Incremental_Calculate(PID_TypeDef *pid, float feedback, float setpoint)
 {
-    if(pd == NULL) return 0.0f;
-    
-    // 1. 计算当前偏差
-    pd->error = setpoint - feedback;
-	
-    // 2. 增量式PD核心公式
-    float delta_u = pd->Kp * (pd->error - pd->last_error) 
-                  + pd->Kd * (pd->error - 2*pd->last_error + pd->prev_error);
-	
-    // 4. 累计输出+总限幅
-    pd->output += delta_u;
-    pd->output = pd->output > pd->output_limit ? pd->output_limit : pd->output;
-    pd->output = pd->output < -pd->output_limit ? -pd->output_limit : pd->output;
-	
-    // 5. 更新偏差历史
-    pd->prev_error = pd->last_error;
-    pd->last_error = pd->error;
-    
-    return pd->output;
+    if(pid == NULL) return 0.0f;
+
+    // 计算当前偏差
+    pid->error = setpoint - feedback;
+
+    // 增量式PID公式
+    float delta_u =  pid->Kp * (pid->error - pid->last_error)
+                   + pid->Ki * pid->error
+                   + pid->Kd * (pid->error - 2 * pid->last_error + pid->prev_error);
+
+    // 输出累加 + 限幅
+    pid->output += delta_u;
+    if(pid->output >  pid->output_limit)  pid->output =  pid->output_limit;
+    if(pid->output < -pid->output_limit)  pid->output = -pid->output_limit;
+
+    // 更新偏差历史
+    pid->prev_error = pid->last_error;
+    pid->last_error = pid->error;
+
+    return pid->output;
 }
 
-//位置式计算
-float PD_Outer_Calculate(PD_TypeDef *pd, float feedback, float setpoint)
+//==================== 位置式 PID（外环：寻迹/位置控制）====================
+float PID_Positional_Calculate(PID_TypeDef *pid, float feedback, float setpoint)
 {
-    if(pd == NULL) return 0.0f;
-    
-    // 1. 计算当前偏差
-    pd->error = setpoint - feedback;
-	
-    // 2. 增量式PD核心公式
-    float delta_u = pd->Kp * pd->error 
-                  + pd->Kd * (pd->error - pd->last_error);
-	
-    // 4. 累计输出+总限幅
-    pd->output = delta_u;
-    pd->output = pd->output > pd->output_limit ? pd->output_limit : pd->output;
-    pd->output = pd->output < -pd->output_limit ? -pd->output_limit : pd->output;
-	
-    // 5. 更新偏差历史
-    pd->last_error = pd->error;
-    
-    return pd->output;
+    if(pid == NULL) return 0.0f;
+
+    // 计算当前偏差
+    pid->error = setpoint - feedback;
+
+    // 积分累加 + 积分限幅
+    pid->integral += pid->error;
+    if(pid->integral >  pid->integral_limit)  pid->integral =  pid->integral_limit;
+    if(pid->integral < -pid->integral_limit)  pid->integral = -pid->integral_limit;
+
+    // 位置式PID公式
+    float output =  pid->Kp * pid->error
+                  + pid->Ki * pid->integral
+                  + pid->Kd * (pid->error - pid->last_error);
+
+    // 输出限幅
+    pid->output = output;
+    if(pid->output >  pid->output_limit)  pid->output =  pid->output_limit;
+    if(pid->output < -pid->output_limit)  pid->output = -pid->output_limit;
+
+    // 更新上一次偏差
+    pid->last_error = pid->error;
+
+    return pid->output;
 }
 
-    
-// PD重置（折线转弯后清空累积）
-void PD_Reset(PD_TypeDef *pd) 
+// PID重置
+void PID_Reset(PID_TypeDef *pid)
 {
-    pd->error = pd->last_error = pd->prev_error = 0.0f;
-	pd->output = 0.0f;
+    pid->error = 0.0f;
+    pid->last_error = 0.0f;
+    pid->prev_error = 0.0f;
+    pid->integral = 0.0f;
+    pid->output = 0.0f;
 }

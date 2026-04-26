@@ -621,24 +621,14 @@ if (get_start_point(IMAGE_H - 2))//找到起点了，再执行八领域，没找
 	get_right(data_stastics_r);
 	//处理函数放这里，不要放到if外面去了，不要放到if外面去了，不要放到if外面去了，重要的事说三遍
 	// 补线函数调用（防护空数据）
-/* 				cross_fill(
-					bin_image,          
-					l_border,           
-					r_border,           
-					data_stastics_l,    
-					data_stastics_r,    
-					dir_l,              
-					dir_r,              
-					points_l,           
-					points_r            
-				); */
-
+	cross_fill(); 
+    ring_recognize();
 }
 else{
 	//printf("没找到起点");
 }
 
-
+/*
 //显示图像   改成你自己的就行 等后期足够自信了，显示关掉，显示屏挺占资源的
  ips200.displayimage_gray((uint8_t *)bin_image, UVC_WIDTH, UVC_HEIGHT);
 
@@ -651,15 +641,15 @@ else{
 	{
 		ips200.draw_point(points_r[i][0]-2, points_r[i][1], uesr_RED);//显示起点
 	}
-
+*/
 	for (i = hightest; i < IMAGE_H-1; i++)
 	{
 		center_line[i] = (l_border[i] + r_border[i]) >> 1;//求中线
 		//求中线最好最后求，不管是补线还是做状态机，全程最好使用一组边线，中线最后求出，不能干扰最后的输出
 		//当然也有多组边线的找法，但是个人感觉很繁琐，不建议
-		ips200.draw_point(center_line[i], i, uesr_GREEN);//显示起点 显示中线	
-		ips200.draw_point(l_border[i], i, uesr_GREEN);//显示起点 显示左边线
-		ips200.draw_point(r_border[i], i, uesr_GREEN);//显示起点 显示右边线
+		//ips200.draw_point(center_line[i], i, uesr_GREEN);//显示起点 显示中线	
+		//ips200.draw_point(l_border[i], i, uesr_GREEN);//显示起点 显示左边线
+		//ips200.draw_point(r_border[i], i, uesr_GREEN);//显示起点 显示右边线
 	}
 
 
@@ -688,5 +678,3 @@ else{
 y值最大*******************************************(188.120)
 
 */
-
-
