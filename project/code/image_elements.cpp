@@ -391,7 +391,7 @@ void cross_fill(void)
     uint8 break_num_l = 0;
     uint8 break_num_r = 0;
     int16 start = 0, end = 0;
-    float slope_l_rate = 0, intercept_l = 0;
+    float slope_rate = 0, intercept = 0;
 
     for (i = 1; i + 7 < data_stastics_l; i++)
     {
@@ -418,10 +418,10 @@ void cross_fill(void)
         end   = limit_a_b((int16)break_num_l - 5, 0, IMAGE_H - 1);
         if (end > start)
         {
-            calculate_s_i((uint8)start, (uint8)end, l_border, &slope_l_rate, &intercept_l);
+            calculate_s_i((uint8)start, (uint8)end, l_border, &slope_rate, &intercept);
             for (i = (uint16)end; i < IMAGE_H - 1; i++)
             {
-                l_border[i] = slope_l_rate * i + intercept_l;
+                l_border[i] = slope_rate * i + intercept;
                 l_border[i] = limit_a_b(l_border[i], border_min, border_max);
             }
         }
@@ -430,10 +430,10 @@ void cross_fill(void)
         end   = limit_a_b((int16)break_num_r - 5, 0, IMAGE_H - 1);
         if (end > start)
         {
-            calculate_s_i((uint8)start, (uint8)end, r_border, &slope_l_rate, &intercept_l);
+            calculate_s_i((uint8)start, (uint8)end, r_border, &slope_rate, &intercept);
             for (i = (uint16)end; i < IMAGE_H - 1; i++)
             {
-                r_border[i] = slope_l_rate * i + intercept_l;
+                r_border[i] = slope_rate * i + intercept;
                 r_border[i] = limit_a_b(r_border[i], border_min, border_max);
             }
         }
