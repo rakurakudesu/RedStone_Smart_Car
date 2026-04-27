@@ -390,7 +390,7 @@ void cross_fill(void)
     uint16 i;
     uint8 break_num_l = 0;
     uint8 break_num_r = 0;
-    uint8 start, end;
+    int16 start = 0, end = 0;
     float slope_l_rate = 0, intercept_l = 0;
 
     for (i = 1; i + 7 < data_stastics_l; i++)
@@ -414,24 +414,28 @@ void cross_fill(void)
         && bin_image[IMAGE_H-1][4]
         && bin_image[IMAGE_H-1][IMAGE_W-4])
     {
-        start = break_num_l - 15;
-        start = limit_a_b(start, 0, IMAGE_H);
-        end   = break_num_l - 5;
-        calculate_s_i(start, end, l_border, &slope_l_rate, &intercept_l);
-        for (i = break_num_l - 5; i < IMAGE_H - 1; i++)
+        start = limit_a_b((int16)break_num_l - 15, 0, IMAGE_H - 1);
+        end   = limit_a_b((int16)break_num_l - 5, 0, IMAGE_H - 1);
+        if (end > start)
         {
-            l_border[i] = slope_l_rate * i + intercept_l;
-            l_border[i] = limit_a_b(l_border[i], border_min, border_max);
+            calculate_s_i((uint8)start, (uint8)end, l_border, &slope_l_rate, &intercept_l);
+            for (i = (uint16)end; i < IMAGE_H - 1; i++)
+            {
+                l_border[i] = slope_l_rate * i + intercept_l;
+                l_border[i] = limit_a_b(l_border[i], border_min, border_max);
+            }
         }
 
-        start = break_num_r - 15;
-        start = limit_a_b(start, 0, IMAGE_H);
-        end   = break_num_r - 5;
-        calculate_s_i(start, end, r_border, &slope_l_rate, &intercept_l);
-        for (i = break_num_r - 5; i < IMAGE_H - 1; i++)
+        start = limit_a_b((int16)break_num_r - 15, 0, IMAGE_H - 1);
+        end   = limit_a_b((int16)break_num_r - 5, 0, IMAGE_H - 1);
+        if (end > start)
         {
-            r_border[i] = slope_l_rate * i + intercept_l;
-            r_border[i] = limit_a_b(r_border[i], border_min, border_max);
+            calculate_s_i((uint8)start, (uint8)end, r_border, &slope_l_rate, &intercept_l);
+            for (i = (uint16)end; i < IMAGE_H - 1; i++)
+            {
+                r_border[i] = slope_l_rate * i + intercept_l;
+                r_border[i] = limit_a_b(r_border[i], border_min, border_max);
+            }
         }
         printf("补线");
     }
