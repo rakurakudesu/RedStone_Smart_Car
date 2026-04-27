@@ -621,17 +621,17 @@ if (get_start_point(IMAGE_H - 2))//找到起点了，再执行八领域，没找
 	get_right(data_stastics_r);
 	//处理函数放这里，不要放到if外面去了，不要放到if外面去了，不要放到if外面去了，重要的事说三遍
 	// 补线函数调用（防护空数据）
-/* 				cross_fill(
-					bin_image,          
-					l_border,           
-					r_border,           
-					data_stastics_l,    
-					data_stastics_r,    
-					dir_l,              
-					dir_r,              
-					points_l,           
-					points_r            
-				); */
+			cross_fill(
+					bin_image,
+					l_border,
+					r_border,
+					data_stastics_l,
+					data_stastics_r,
+					dir_l,
+					dir_r,
+					points_l,
+					points_r
+				);
 
 }
 else{

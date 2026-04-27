@@ -105,7 +105,7 @@ void cross_fill(uint8(*image)[IMAGE_W], uint8 *l_border, uint8 *r_border, uint16
 	uint8 start, end;
 	float slope_l_rate = 0, intercept_l = 0;
 	//出十字
-	for (i = 1; i < total_num_l; i++)
+	for (i = 1; i + 7 < total_num_l; i++)
 	{
 		if (dir_l[i - 1] == 4 && dir_l[i] == 4 && dir_l[i + 3] == 6 && dir_l[i + 5] == 6 && dir_l[i + 7] == 6)
 		{
@@ -116,7 +116,7 @@ void cross_fill(uint8(*image)[IMAGE_W], uint8 *l_border, uint8 *r_border, uint16
 			break;
 		}
 	}
-	for (i = 1; i < total_num_r; i++)
+	for (i = 1; i + 7 < total_num_r; i++)
 	{
 		if (dir_r[i - 1] == 4 && dir_r[i] == 4 && dir_r[i + 3] == 6 && dir_r[i + 5] == 6 && dir_r[i + 7] == 6)
 		{
