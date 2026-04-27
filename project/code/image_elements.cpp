@@ -10,10 +10,10 @@
 *     -<em>false</em> fail
 *     -<em>true</em> succeed
 */
-float Slope_Calculate(uint8 begin, uint8 end, uint8 *border)
+float Slope_Calculate(uint16 begin, uint16 end, uint8 *border)
 {
 	float xsum = 0, ysum = 0, xysum = 0, x2sum = 0;
-	int16 i = 0;
+	uint16 i = 0;
 	float result = 0;
 	static float resultlast;
 
@@ -49,7 +49,7 @@ float Slope_Calculate(uint8 begin, uint8 end, uint8 *border)
 *     -<em>false</em> fail
 *     -<em>true</em> succeed
 */
-void calculate_s_i(uint8 start, uint8 end, uint8 *border, float *slope_rate, float *intercept)
+void calculate_s_i(uint16 start, uint16 end, uint8 *border, float *slope_rate, float *intercept)
 {
 	uint16 i, num = 0;
 	uint16 xsum = 0, ysum = 0;
@@ -390,7 +390,7 @@ void cross_fill(void)
     uint16 i;
     uint8 break_num_l = 0;
     uint8 break_num_r = 0;
-    int16 start = 0, end = 0;
+    uint16 start = 0, end = 0;
     float slope_rate = 0, intercept = 0;
 
     for (i = 1; i + 7 < data_stastics_l; i++)
@@ -414,24 +414,24 @@ void cross_fill(void)
         && bin_image[IMAGE_H-1][4]
         && bin_image[IMAGE_H-1][IMAGE_W-4])
     {
-        start = limit_a_b((int16)break_num_l - 15, 0, IMAGE_H - 1);
-        end   = limit_a_b((int16)break_num_l - 5, 0, IMAGE_H - 1);
+        start = (uint16)limit_a_b((int16)break_num_l - 15, 0, IMAGE_H - 1);
+        end   = (uint16)limit_a_b((int16)break_num_l - 5, 0, IMAGE_H - 1);
         if (end > start)
         {
-            calculate_s_i((uint8)start, (uint8)end, l_border, &slope_rate, &intercept);
-            for (i = (uint16)end; i < IMAGE_H - 1; i++)
+            calculate_s_i(start, end, l_border, &slope_rate, &intercept);
+            for (i = end; i < IMAGE_H - 1; i++)
             {
                 l_border[i] = slope_rate * i + intercept;
                 l_border[i] = limit_a_b(l_border[i], border_min, border_max);
             }
         }
 
-        start = limit_a_b((int16)break_num_r - 15, 0, IMAGE_H - 1);
-        end   = limit_a_b((int16)break_num_r - 5, 0, IMAGE_H - 1);
+        start = (uint16)limit_a_b((int16)break_num_r - 15, 0, IMAGE_H - 1);
+        end   = (uint16)limit_a_b((int16)break_num_r - 5, 0, IMAGE_H - 1);
         if (end > start)
         {
-            calculate_s_i((uint8)start, (uint8)end, r_border, &slope_rate, &intercept);
-            for (i = (uint16)end; i < IMAGE_H - 1; i++)
+            calculate_s_i(start, end, r_border, &slope_rate, &intercept);
+            for (i = end; i < IMAGE_H - 1; i++)
             {
                 r_border[i] = slope_rate * i + intercept;
                 r_border[i] = limit_a_b(r_border[i], border_min, border_max);
