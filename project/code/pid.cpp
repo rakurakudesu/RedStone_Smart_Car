@@ -1,8 +1,9 @@
 #include "zf_common_headfile.hpp"
 
-PID_TypeDef TracePID; 
+PID_TypeDef TracePID;
 PID_TypeDef AnglePID;
-PID_TypeDef SpeedPID;   
+PID_TypeDef Speed_lPID;
+PID_TypeDef Speed_rPID;
 
 // PID初始化
 void PID_Init(PID_TypeDef *pid, float Kp, float Ki, float Kd, float output_limit, float integral_limit)
@@ -29,7 +30,7 @@ float PID_Incremental_Calculate(PID_TypeDef *pid, float feedback, float setpoint
     pid->error = setpoint - feedback;
 
     // 增量式PID公式
-    float delta_u =  pid->Kp * (pid->error - pid->last_error)
+    float delta_u = pid->Kp * (pid->error - pid->last_error)
                    + pid->Ki * pid->error
                    + pid->Kd * (pid->error - 2 * pid->last_error + pid->prev_error);
 

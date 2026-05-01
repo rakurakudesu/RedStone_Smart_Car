@@ -194,7 +194,7 @@ uint8 get_start_point(uint8 start_row)
 	{
 		start_point_l[0] = i;//x
 		start_point_l[1] = start_row;//y
-		if (bin_image[start_row][i] == 255 && bin_image[start_row][i - 1] == 0)
+		if (bin_image[start_row][i] == 255 && bin_image[start_row][i-1] == 0)
 		{
 			//printf("找到左边起点image[%d][%d]\n", start_row,i);
 			l_found = 1;
@@ -206,7 +206,7 @@ uint8 get_start_point(uint8 start_row)
 	{
 		start_point_r[0] = i;//x
 		start_point_r[1] = start_row;//y
-		if (bin_image[start_row][i] == 255 && bin_image[start_row][i + 1] == 0)
+		if (bin_image[start_row][i] == 255 && bin_image[start_row][i+1] == 0)
 		{
 			//printf("找到右边起点image[%d][%d]\n",start_row, i);
 			r_found = 1;
@@ -580,9 +580,131 @@ void image_draw_rectan(uint8(*image)[IMAGE_W])
 		image[0][i] = 0;
 		image[1][i] = 0;
 		image[IMAGE_H-1][i] = 0;
-
 	}
 }
+/** 
+* @brief 十字补线函数
+* @return 返回说明
+*     -<em>false</em> fail
+*     -<em>true</em> succeed
+ */
+//变量
+uint8 A[2] ={0, 0};//拐点A，左下
+uint8 B[2] ={0, 0};//拐点B，右下
+uint8 C[2] ={0, 0};//拐点C，左上
+uint8 D[2] ={0, 0};//拐点D，右上
+uint8 flag_A = 0;//找到A标志
+uint8 flag_B = 0;//找到B标志
+uint8 flag_C = 0;//找到C标志
+uint8 flag_D = 0;//找到D标志
+void cross_fill(void)
+{
+    uint16 i;
+
+	//从下往上找A,B
+	for (i = IMAGE_H - 4; i > 40; i--)//找A
+	{
+		if (abs(l_border[i+2] - l_border[i+1]) < 4
+			&& abs(l_border[i+1] - l_border[i]) < 4
+			&& abs(l_border[i] - l_border[i-1]) > 7)//从下往上出现断层
+		{
+			A[0] = l_border[i];//x
+			A[1] = i;//y
+			flag_A = 1;//找到A
+			//printf("A%d,%d\n",A[0],A[1]);
+			break;
+		}
+	}
+	for (i = IMAGE_H - 4; i > 40; i--)//找B
+	{
+		if (abs(r_border[i+2] - r_border[i+1]) < 4
+			&& abs(r_border[i+1] - r_border[i]) < 4
+			&& abs(r_border[i] - r_border[i-1]) > 7)//从下往上出现断层
+		{
+			B[0] = r_border[i];//x
+			B[1] = i;//y
+			flag_B = 1;//找到B
+			//printf("B%d,%d\n",B[0],B[1]);
+			break;
+		}
+	}
+	//从上往下找C,D
+	for (i = 11; i < IMAGE_H - 2; i++)//找C
+	{
+		if (abs(l_border[i-2] - l_border[i-1]) < 4
+			&& abs(l_border[i-1] - l_border[i]) < 4
+			&& abs(l_border[i] - l_border[i+1]) > 7)//从上往下出现断层
+		{
+			C[0] = l_border[i];//x
+			C[1] = i;//y
+			flag_C = 1;//找到C
+			//printf("C%d,%d\n",C[0],C[1]);
+			break;
+		}
+	}
+	for (i = 11; i < IMAGE_H - 2; i++)//找D
+	{
+		if (abs(r_border[i-2] - r_border[i-1]) < 4
+			&& abs(r_border[i-1] - r_border[i]) < 4
+			&& abs(r_border[i] - r_border[i+1]) > 7)//从上往下出现断层
+		{
+			D[0] = r_border[i];//x
+			D[1] = i;//y
+			flag_D = 1;//找到D
+			//printf("D%d,%d\n",D[0],D[1]);
+			break;
+		}
+	}
+	if (flag_C && flag_D)//进入十字补线
+	{
+		float k_l = 0.0;//左补线斜率
+		float b_l = 0.0;//左补线截距
+		float k_r = 0.0;//左补线斜率
+		float b_r = 0.0;//左补线截距
+		if (flag_A)//连接AC补线
+		{
+			k_l = ((float)A[1] - (float)C[1]) / ((float)A[0] - (float)C[0]);
+			b_l = (float)A[1] - k_l * (float)A[0];
+			for (i = A[1]; i > C[1]; i--)
+			{
+				l_border[i] = (i - b_l) / k_l;//执行左边补线
+			}
+		}
+		else//C处延长补线
+		{
+			k_l = (float)7 / ((float)C[0] - (float)l_border[C[1] - 7]);
+			b_l = (float)C[1] - k_l * (float)C[0];
+			for (i = IMAGE_H - 2; i > C[1]; i--)
+			{
+				uint8 temp = (i - b_l) / k_l;
+				if (temp >= 0 && temp < IMAGE_W)//越界保护
+					l_border[i] = temp;//执行左边补线
+			}
+		}
+		if (flag_B)//连接B、D
+		{
+			k_r = ((float)B[1] - (float)D[1]) / ((float)B[0] - (float)D[0]);
+			b_r = (float)B[1] - k_r * (float)B[0];
+			for (i = B[1]; i > D[1]; i--)
+			{
+				r_border[i] = (uint8)((i - b_r) / k_r);//执行右边补线
+			}
+		}
+		else
+		{
+			k_r = (float)7 / ((float)D[0] - (float)l_border[D[1] - 7]);
+			b_r = (float)D[1] - k_r * (float)D[0];
+			for (i = IMAGE_H - 2; i > D[1]; i--)
+			{
+				uint8 temp = (i - b_r) / k_r;
+				if (temp >= 0 && temp < IMAGE_W)//越界保护
+					r_border[i] = temp;//执行右边补线
+			}
+		}
+		// printf("A%d,B%d,C%d,D%d\n",flag_A,flag_B,flag_C,flag_D);
+	}
+}
+
 /*
 函数名称：void image_process(void)
 功能说明：最终处理函数
@@ -621,8 +743,8 @@ if (get_start_point(IMAGE_H - 2))//找到起点了，再执行八领域，没找
 	get_right(data_stastics_r);
 	//处理函数放这里，不要放到if外面去了，不要放到if外面去了，不要放到if外面去了，重要的事说三遍
 	// 补线函数调用（防护空数据）
-	cross_fill(); 
-    ring_recognize();
+	cross_fill();
+    //ring_recognize();
 }
 else{
 	//printf("没找到起点");
@@ -648,8 +770,8 @@ else{
 		//求中线最好最后求，不管是补线还是做状态机，全程最好使用一组边线，中线最后求出，不能干扰最后的输出
 		//当然也有多组边线的找法，但是个人感觉很繁琐，不建议
 		ips200.draw_point(center_line[i], i, uesr_GREEN);//显示起点 显示中线	
-		ips200.draw_point(l_border[i], i, uesr_GREEN);//显示起点 显示左边线
-		ips200.draw_point(r_border[i], i, uesr_GREEN);//显示起点 显示右边线
+		ips200.draw_point(l_border[i], i, uesr_RED);//显示起点 显示左边线
+		ips200.draw_point(r_border[i], i, uesr_RED);//显示起点 显示右边线
 	}
 
 
@@ -675,6 +797,6 @@ else{
 ***********************************************************
 ***********************************************************
 ***********************************************************
-y值最大*******************************************(188.120)
+y值最大*******************************************(160.120)
 
 */

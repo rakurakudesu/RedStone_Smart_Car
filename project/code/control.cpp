@@ -1,6 +1,11 @@
 #include "zf_common_headfile.hpp"
 
 zf_device_imu imu_dev;
+float target_speed = 0;
+float current_lspeed = 0;
+float current_rspeed = 0;
+float left_speed = 0;
+float right_speed = 0;
 
 // 限幅函数
 int constrain(int val, int min_val, int max_val)
@@ -34,31 +39,33 @@ float steer1,target_angle1;
 
 void line_follow_pid_control(void)
 {
-    // ===================== 1. 外环：图像偏差 → 目标角度 =====================
-    float line_error = get_center_error();
-    float target_angle = PID_Positional_Calculate(&TracePID, line_error, 0.0f);
-    target_angle1=target_angle;
-    // ===================== 2. 内环：陀螺仪角度 → 转向差速 =====================
-    float current_angle = imu_dev.get_gyro_z()*0.001f;  // 替换为你的陀螺仪航向角函数
-    float steer = PID_Positional_Calculate(&AnglePID, current_angle, target_angle);
-    steer1=steer;
+    // // ===================== 1. 外环：图像偏差 → 目标角度 =====================
+    // float line_error = get_center_error();
+    // float target_angle = PID_Positional_Calculate(&TracePID, line_error, 0.0f);
+    // target_angle1=target_angle;
+    // // ===================== 2. 内环：陀螺仪角速度 → 转向差速 =====================
+    // float current_angle = imu_dev.get_gyro_z()*0.001f;  // 替换为你的陀螺仪航向角函数
+    // float steer = PID_Positional_Calculate(&AnglePID, current_angle, target_angle);
+    // steer1=steer;
     // ===================== 3. 速度环：编码器 → 稳定前进速度 =====================
-    float target_speed = 0.35f;  // 目标前进速度 m/s
-    float current_speed = (get_left_speed_mps() + get_right_speed_mps()) / 2.0f;
-    float speed_out = PID_Incremental_Calculate(&SpeedPID, current_speed, target_speed);
+    //target_speed = 0.0f;  // 目标前进速度 m/s
+    current_lspeed = get_left_speed_mps();
+    current_rspeed = get_right_speed_mps();
+    left_speed = PID_Incremental_Calculate(&Speed_lPID, current_lspeed, target_speed);
+    right_speed = PID_Incremental_Calculate(&Speed_rPID, current_rspeed, target_speed);
 
-    // ===================== 4. 电机速度合成 =====================
-    int base_speed = BASE_SPEED ;  // 基础速度 + 速度环修正
-    int left_speed  = base_speed + (int)steer;
-    int right_speed = base_speed - (int)steer;
+    // // ===================== 4. 电机速度合成 =====================
+    // int base_speed = BASE_SPEED ;  // 基础速度 + 速度环修正
+    // int left_speed  = base_speed + (int)steer;
+    // int right_speed = base_speed - (int)steer;
 
-    // ===================== 5. 限幅（防止超范围） =====================
-    left_speed  = constrain(left_speed,  -20, 20);
-    right_speed = constrain(right_speed, -20, 20);
+    // // ===================== 5. 限幅（防止超范围） =====================
+    // left_speed  = constrain(left_speed,  -20, 20);
+    // right_speed = constrain(right_speed, -20, 20);
 
     // ===================== 6. 输出到电机 =====================
-    set_left_speed(left_speed);
-    set_right_speed(right_speed);
+    set_left_speed((int)left_speed);
+    set_right_speed((int)right_speed);
 }
 
 float get_steer(void)

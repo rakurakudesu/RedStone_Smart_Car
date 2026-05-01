@@ -29,12 +29,12 @@ typedef unsigned           int uint32;
 extern uint8 original_image[IMAGE_H][IMAGE_W];
 extern uint8 bin_image[IMAGE_H][IMAGE_W];//图像数组
 extern uint8 center_line[IMAGE_H];//中线数组
-extern uint8  l_border[IMAGE_H];
-extern uint8  r_border[IMAGE_H];
-extern uint16 data_stastics_l;
-extern uint16 data_stastics_r;
-extern uint16 points_l[IMAGE_H * 3][2];
-extern uint16 points_r[IMAGE_H * 3][2];
+extern uint8  l_border[IMAGE_H];//左边界数组
+extern uint8  r_border[IMAGE_H];//右边界数组
+extern uint16 data_stastics_l;//八邻域左边找到的点个数(黑点)
+extern uint16 data_stastics_r;//八邻域右边找到的点个数(黑点)
+extern uint16 points_l[IMAGE_H * 3][2];//八邻域爬得的边界，左
+extern uint16 points_r[IMAGE_H * 3][2];//八邻域爬得的边界，右
 extern uint16 dir_l[IMAGE_H * 3];
 extern uint16 dir_r[IMAGE_H * 3];
 
