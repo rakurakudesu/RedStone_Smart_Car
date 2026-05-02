@@ -33,19 +33,19 @@
 ********************************************************************************************************************/
 
 #include "zf_common_headfile.hpp"
-
+#include "control.hpp"
 zf_driver_pit system_pit;
-uint8 t = 0;
+uint16 t = 0;//调试用
 
 // 10ms中断
 void system_pit_callback(void)
 {
     encoder_update();  // 编码器计算
-    line_follow_pid_control();
-     // printf("get_target_angle%f\n",get_target_angle());
-     // printf("get_steer:%f\n",get_steer());
-     // printf("get_gyro_z:%f\n",imu_dev.get_gyro_z()*0.01f);
-     // printf("\n");
+    line_follow_pid_control(); //pid控制
+    // printf("get_target_angle%f\n",get_target_angle());
+    // printf("get_steer:%f\n",get_steer());
+    // printf("get_gyro_z:%f\n",imu_dev.get_gyro_z()*0.01f);
+    // printf("\n");
 }
 
 int main(int, char**) 
@@ -67,26 +67,18 @@ int main(int, char**)
 //******************************pid参数配置**********************************
     PID_Init(&TracePID,  3.5f, 0.0f,  2.5f,  50.0f,  0.0f);    // 图像→角度  Kp小 Kd大
     PID_Init(&AnglePID,  0.7f, 0.0f,  3.5f,  50.0f,  0.0f);    // 角度→电机  Kp大 Kd中
-    PID_Init(&Speed_lPID,  1.0f, 0.0f,  0.0f,  10.0f,   10.0f);    // 速度环     Kp小 Kd小
-    PID_Init(&Speed_rPID,  1.0f, 0.0f,  0.0f,  10.0f,   10.0f);    // 速度环     Kp小 Kd小
+    PID_Init(&Speed_lPID,  9.7f, 0.5f,  0.0f,  500.0f,   10.0f);    // 速度环     Kp小 Kd小
+    PID_Init(&Speed_rPID,  9.7f, 0.5f,  0.0f,  500.0f,   10.0f);    // 速度环     Kp小 Kd小
 
 //******************************主循环**********************************
 
             while(1)
             {
-                
                 if(uvc_dev.wait_image_refresh() == 0)
                 {
                     system_delay_ms(100);
-                     t ++;
-                    if (t == 25)
-                        target_speed = 0;
-                    if (t == 50)
-                    {
-                        t = 0;
-                        target_speed = 20;
-                    }
-                    printf("samples:%f, %f, %f\n", target_speed, current_lspeed, left_speed);
+                    
+                    printf("samples:%f, %f, %f\n", target_rspeed, current_rspeed, right_PWM);//调试输出
                     //image_process();
                     
                 } 
