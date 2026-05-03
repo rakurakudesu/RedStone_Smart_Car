@@ -78,7 +78,7 @@ int main(int, char**)
                 {
                     system_delay_ms(100);
                     
-                    printf("samples:%f, %f, %f\n", target_rspeed, current_rspeed, right_PWM);//调试输出
+                    printf("samples:%f, %f, %f\n", target_rspeed, current_rspeed, right_PWM);//调试输出用
                     //image_process();
                     
                 } 

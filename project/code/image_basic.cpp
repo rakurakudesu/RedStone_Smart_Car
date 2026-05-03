@@ -705,6 +705,28 @@ void cross_fill(void)
 	}
 }
 
+// 获取有效中线（底部多行加权平均，抗干扰）
+float center_error = 0.0;
+uint8 sum = 0;
+uint8 cnt = 0;
+float get_center_error(void)
+{
+    // 取图像底部30行（y从90到119，共30行），越靠近小车越重要
+    for(uint8 y = IMAGE_H - 30; y < IMAGE_H; y++){
+        // 过滤无效值（0和超宽值）
+        if(center_line[y] > 5 && center_line[y] < IMAGE_W - 5){
+            sum += center_line[y];
+            cnt++;
+        }
+    }
+    // 无有效线时返回中心（不跑偏）
+    if(cnt == 0) return 0.0f;
+    
+    uint8 avg_mid = sum / cnt;
+    // 误差 = 中心 - 当前中线（正=偏右，负=偏左）
+    return (float)(CENTER_X - avg_mid);
+}
+
 /*
 函数名称：void image_process(void)
 功能说明：最终处理函数
@@ -774,7 +796,7 @@ else{
 		ips200.draw_point(r_border[i], i, uesr_RED);//显示起点 显示右边线
 	}
 
-
+	center_error = get_center_error();
 }
 
 

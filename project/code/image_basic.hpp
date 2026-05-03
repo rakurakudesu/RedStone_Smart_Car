@@ -37,6 +37,7 @@ extern uint16 points_l[IMAGE_H * 3][2];//八邻域爬得的边界，左
 extern uint16 points_r[IMAGE_H * 3][2];//八邻域爬得的边界，右
 extern uint16 dir_l[IMAGE_H * 3];
 extern uint16 dir_r[IMAGE_H * 3];
+extern float center_error;
 
 void image_process(void); //直接在中断或循环里调用此程序就可以循环执行了
 int16 limit_a_b(int16 x, int a, int b);

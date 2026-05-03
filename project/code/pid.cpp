@@ -34,7 +34,7 @@ float PID_Incremental_Calculate(PID_TypeDef *pid, float feedback, float setpoint
                    + pid->Ki * pid->error
                    + pid->Kd * (pid->error - 2 * pid->last_error + pid->prev_error);
 
-    // 输出累加 + 限幅
+    // 输出累加 + 限幅 + 积分限幅
     pid->output += delta_u;
     if(pid->output >  pid->output_limit)  pid->output =  pid->output_limit;
     if(pid->output < -pid->output_limit)  pid->output = -pid->output_limit;
