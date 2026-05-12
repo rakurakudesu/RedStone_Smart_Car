@@ -1,31 +1,32 @@
-#ifndef __PID_H
-#define __PID_H
+#ifndef __PID_HPP
+#define __PID_HPP
 
 #define PWM_MAX       100   // PWM最大值
 #define LINE_THRESHOLD 120       // 折线判定阈值（传感器偏差超15=进入折线）
 #define BIAS_DEADZONE 0         // 直道死区（偏差<5=直道）
 
-// PD结构体（通用）
-typedef struct 
-{
-    float Kp;          // 比例系数
-    float Kd;          // 微分系数
-    float error;       // 当前误差
-    float last_error;  // 上一次误差
-    float prev_error;  // 上上次误差
-    float output_limit;// 输出限幅
-    float output;      // PD输出
-} PD_TypeDef;
+// PID结构体定义
+typedef struct {
+    float Kp;             // 比例系数
+    float Ki;             // 积分系数
+    float Kd;             // 微分系数
+    float output_limit;   // 输出限幅
+    float integral_limit; // 积分限幅（抗积分饱和）
 
+    float error;          // 当前偏差
+    float last_error;     // 上一次偏差
+    float prev_error;     // 上上次偏差（增量式专用）
+    float integral;       // 积分累积值（位置式专用）
+    float output;         // PID输出值
+} PID_TypeDef;
 
-// 串级PD实例：外环（寻迹偏差→目标角度）、内环（角度偏差→电机差速）
-extern PD_TypeDef OuterPD;  // 外环PD（寻迹偏差）
-extern PD_TypeDef InnerPD;  // 内环PD（角度偏差）
-extern PD_TypeDef SpeedPD;  // 内环PD（角度偏差）
+void PID_Init(PID_TypeDef *pid, float Kp, float Ki, float Kd, float output_limit, float integral_limit);
+float PID_Incremental_Calculate(PID_TypeDef *pid, float feedback, float setpoint);
+float PID_Positional_Calculate(PID_TypeDef *pid, float feedback, float setpoint);
+void PID_Reset(PID_TypeDef *pid);
 
-void PD_Init(PD_TypeDef *pd, float Kp, float Kd, float output_limit);
-float PD_Outer_Calculate(PD_TypeDef *pd, float feedback, float setpoint);//外环PD计算，位置式
-float PD_Inner_Calculate(PD_TypeDef *pd, float feedback, float setpoint);//内环PD计算，增量式
-void PD_Reset(PD_TypeDef *pd);
+extern PID_TypeDef TracePID;  
+extern PID_TypeDef AnglePID; 
+extern PID_TypeDef SpeedPID;  
 
 #endif
