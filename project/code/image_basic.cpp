@@ -707,12 +707,13 @@ void cross_fill(void)
 
 // 获取有效中线（底部多行加权平均，抗干扰）
 float center_error = 0.0;
-uint8 sum = 0;
-uint8 cnt = 0;
+uint16 sum = 0;
+uint16 cnt = 0;
 float get_center_error(void)
 {
+	sum = cnt = 0;
     // 取图像底部30行（y从90到119，共30行），越靠近小车越重要
-    for(uint8 y = IMAGE_H - 30; y < IMAGE_H; y++){
+    for(uint8 y = IMAGE_H - 30; y < IMAGE_H - 8; y++){
         // 过滤无效值（0和超宽值）
         if(center_line[y] > 5 && center_line[y] < IMAGE_W - 5){
             sum += center_line[y];
@@ -725,6 +726,63 @@ float get_center_error(void)
     uint8 avg_mid = sum / cnt;
     // 误差 = 中心 - 当前中线（正=偏右，负=偏左）
     return (float)(CENTER_X - avg_mid);
+}
+
+float curvature = 0.0;
+float get_curvature(void)
+{
+    uint8 A[2], B[2], C[2];
+    // 你选择的三个点：近点A(第7行)、中点B(第25行)、远点C(第35行)
+    // 坐标定义：(x, y)，x是中线列号，y是图像行号（从上到下递增）
+    A[0] = center_line[7];
+    A[1] = 7;
+    B[0] = center_line[15];
+    B[1] = 15;
+    C[0] = center_line[25];
+    C[1] = 25;
+
+    // 1. 转换为float类型，避免整数运算精度丢失
+    float x1 = (float)A[0];
+    float y1 = (float)A[1];
+    float x2 = (float)B[0];
+    float y2 = (float)B[1];
+    float x3 = (float)C[0];
+    float y3 = (float)C[1];
+
+    // 2. 计算向量分量
+    float dx1 = x2 - x1; // AB向量x分量
+    float dy1 = y2 - y1; // AB向量y分量
+    float dx2 = x3 - x2; // BC向量x分量
+    float dy2 = y3 - y2; // BC向量y分量
+    float dx3 = x3 - x1; // AC向量x分量
+    float dy3 = y3 - y1; // AC向量y分量
+
+    // 3. 计算叉乘（核心：决定曲率大小和方向）
+    // 叉乘>0：向左弯；叉乘<0：向右弯；叉乘=0：直线
+    float cross = dx1 * dy2 - dy1 * dx2;
+
+    // 4. 计算三个边的长度
+    float len_AB = sqrtf(dx1*dx1 + dy1*dy1);
+    float len_BC = sqrtf(dx2*dx2 + dy2*dy2);
+    float len_AC = sqrtf(dx3*dx3 + dy3*dy3);
+
+    // 5. 计算分母，防止除以零
+    float denominator = len_AB * len_BC * len_AC;
+    if (denominator < 1e-4f) // 三点重合或接近重合
+    {
+        return 0.0f;
+    }
+
+    // 6. 计算带方向的曲率（曲率=1/半径R）
+    // 曲率越大，弯道越急；曲率为0是直线
+    float curvature = -2.0f * cross / denominator;
+
+    // // 7. 曲率限幅
+    // const float MAX_CURVATURE = 0.08f; // 根据你的摄像头分辨率和赛道调整
+    // if (curvature > MAX_CURVATURE)  curvature = MAX_CURVATURE;
+    // if (curvature < -MAX_CURVATURE) curvature = -MAX_CURVATURE;
+
+    return curvature;
 }
 
 /*
@@ -765,7 +823,7 @@ if (get_start_point(IMAGE_H - 2))//找到起点了，再执行八领域，没找
 	get_right(data_stastics_r);
 	//处理函数放这里，不要放到if外面去了，不要放到if外面去了，不要放到if外面去了，重要的事说三遍
 	// 补线函数调用（防护空数据）
-	cross_fill();
+	//cross_fill();
     //ring_recognize();
 }
 else{
@@ -796,6 +854,7 @@ else{
 		ips200.draw_point(r_border[i], i, uesr_RED);//显示起点 显示右边线
 	}
 
+	curvature = get_curvature();
 	center_error = get_center_error();
 }
 

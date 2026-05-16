@@ -4,6 +4,7 @@ PID_TypeDef TracePID;
 PID_TypeDef AnglePID;
 PID_TypeDef Speed_lPID;
 PID_TypeDef Speed_rPID;
+PID_TypeDef Delta_SpPID;
 
 // PID初始化
 void PID_Init(PID_TypeDef *pid, float Kp, float Ki, float Kd, float output_limit, float integral_limit)
@@ -54,14 +55,20 @@ float PID_Positional_Calculate(PID_TypeDef *pid, float feedback, float setpoint)
     // 计算当前偏差
     pid->error = setpoint - feedback;
 
-    // 积分累加 + 积分限幅
-    pid->integral += pid->error;
-    if(pid->integral >  pid->integral_limit)  pid->integral =  pid->integral_limit;
-    if(pid->integral < -pid->integral_limit)  pid->integral = -pid->integral_limit;
-
+    float I_THRESHOLD = 3;
+    if ((pid->error/setpoint) < I_THRESHOLD)
+    {
+        // 积分累加 + 积分限幅
+        pid->integral += pid->Ki * pid->error;
+        if(pid->integral >  pid->integral_limit)  pid->integral =  pid->integral_limit;
+        if(pid->integral < -pid->integral_limit)  pid->integral = -pid->integral_limit;
+    }
+    else
+        pid->integral = 0;
+   
     // 位置式PID公式
     float output =  pid->Kp * pid->error
-                  + pid->Ki * pid->integral
+                  + pid->integral
                   + pid->Kd * (pid->error - pid->last_error);
 
     // 输出限幅

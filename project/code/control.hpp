@@ -3,7 +3,7 @@
 
 void line_follow_pid_control(void);
 #define CENTER_X (IMAGE_W / 2)
-#define BASE_SPEED 15 
+#define BASE_SPEED 11 
 extern zf_device_imu imu_dev;
 float get_target_angle(void);
 float get_steer(void);
@@ -16,5 +16,10 @@ extern float current_rspeed;
 extern float target_omega;
 extern float current_omega;
 extern float steer;
+extern float current_delta_Sp;
+extern float target_delta_Sp;
+extern float delta_Sp;
+extern float target_lsp;
+extern float target_rsp;
 
 #endif 

@@ -29,5 +29,6 @@ extern PID_TypeDef TracePID;
 extern PID_TypeDef AnglePID;
 extern PID_TypeDef Speed_lPID;
 extern PID_TypeDef Speed_rPID;
+extern PID_TypeDef Delta_SpPID;
 
 #endif
