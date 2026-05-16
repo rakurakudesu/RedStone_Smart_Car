@@ -89,12 +89,12 @@ void line_follow_pid_control(void)
 
     // ===================== 2. 内环：陀螺仪角速度 → 转向差速 =====================
     //current_omega = imu_dev.get_gyro_z();  // 替换为你的陀螺仪航向角函数
-    steer = target_omega;//PID_Positional_Calculate(&AnglePID, current_omega, target_omega);
+    steer = 0;//PID_Positional_Calculate(&AnglePID, current_omega, target_omega);
 
     // ===================== 3. 差速环：编码器 → 差速 =====================
     //给出目标速度，基础 + 角度环输出 + 角度前馈
-    target_lspeed = BASE_SPEED + steer //;+ kf_turn * target_omega;
-    target_rspeed = BASE_SPEED - steer //;- kf_turn * target_omega;
+    target_lspeed = BASE_SPEED + steer + kf_turn * target_omega;
+    target_rspeed = BASE_SPEED - steer - kf_turn * target_omega;
     target_delta_Sp = target_lspeed - target_rspeed;
     if ( target_delta_Sp > 0.1)
     {
