@@ -1,4 +1,4 @@
-# Install script for directory: /home/raku/LS2K0300_Library/LS2K300_Library/RedStone_raku_project/project/user
+# Install script for directory: /home/oneplusqwer/桌面/RedStone_Smart_Car/project/user
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/raku/LS2K0300_Library/LS2K300_Library/RedStone_raku_project/project/out/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/oneplusqwer/桌面/RedStone_Smart_Car/project/out/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -2,7 +2,7 @@
 #define _ENCODER_HPP
 
 // ===================== 硬件固定参数 =====================
-#define PULSE_PER_WHEEL_REV    1900.0f   // 轮胎一圈脉冲
+#define PULSE_PER_WHEEL_REV    4642.133f   // 轮胎一圈脉冲      1024*2*68/30一圈脉冲乘以齿轮比
 #define WHEEL_CIRCUMFERENCE    0.20106f  // 轮胎周长 米
 #define DT                    0.01f     // 10ms = 0.01秒
 // ======================================================

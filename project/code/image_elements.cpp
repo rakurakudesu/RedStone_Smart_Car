@@ -383,7 +383,7 @@ void find_flagpoint(void)
                 l_break_down[0] = l_border[i]; 
                 l_break_down[1] = i;
                 //printf("左上：X=%d, Y=%d\r\n", l_break_up[0], l_break_up[1]);
-                draw_3x3(l_break_down[0], l_break_down[1],uesr_RED);
+                //draw_3x3(l_break_down[0], l_break_down[1],uesr_RED);
             }
         }
 
@@ -399,7 +399,7 @@ void find_flagpoint(void)
             flag_r_p = 1;
             r_p[0]=r_border[i];
             r_p[1]=i;
-            printf("rp：X=%d, Y=%d\r\n", r_p[0], r_p[1]);
+            //printf("rp：X=%d, Y=%d\r\n", r_p[0], r_p[1]);
             //draw_3x3(r_p[0],r_p[1],uesr_BLUE);
         }
 
@@ -460,7 +460,7 @@ void find_flagpoint(void)
                     continue;
 
                 if (points_r[index-8][0]>points_r[index][0]
-                &&points_r[index-8][1]<=points_r[index][1]
+                &&points_r[index-8][1]<points_r[index][1]
                 &&points_r[index+8][0]<points_r[index][0]
                 &&points_r[index+8][1]<points_r[index][1]
                 &&index != 0xFFFF)
@@ -468,10 +468,12 @@ void find_flagpoint(void)
                     r_v_up[0] = points_r[index][0];
                     r_v_up[1] = points_r[index][1];
                     flag_r_v_up = 1;
-                    printf("rvup\n");
+                    //printf("rvup\n");
+                    printf("右上：X=%d, Y=%d\r\n",  r_v_up[0],  r_v_up[1]);
                     //ips200.draw_point(r_v_up[0], r_v_up[1], uesr_GREEN);
                     break;
                 }
+
             
         }  
     }
@@ -733,7 +735,7 @@ void ring_recognize(void)
             // 【即将入环】：出口拐点稳定，断裂持续
             if(flag_r_v_up && !flag_r_conti && !flag_r_p) 
             {
-                right_ring = 4;
+                //right_ring = 4;
                 connect_points(screen_l_down, r_v_up, l_border);
                 printf("右状态4\n");
             }
