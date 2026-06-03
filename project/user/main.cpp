@@ -41,12 +41,11 @@ uint16 t = 0;//调试用
 // 10ms中断
 void system_pit_callback(void)
 {
-    encoder_update();  // 编码器计算
-    line_follow_pid_control(); //pid控制
-    // printf("get_target_angle%f\n",get_target_angle());
-    // printf("get_steer:%f\n",get_steer());
-    // printf("get_gyro_z:%f\n",imu_dev.get_gyro_z()*0.01f);
-    // printf("\n");
+    if(Is_Mahony_Ready())
+    {
+        encoder_update();  // 编码器计算
+        line_follow_pid_control(); //pid控制
+    }
 }
 
 int main(int, char**) 
@@ -61,43 +60,51 @@ int main(int, char**)
 
     imu_dev.init();
     motor_Init();
+    Mahony_Init();
     adc_battery_Init();
     
 //******************************pit中断配置**********************************
     system_pit.init_ms(5, system_pit_callback);
     
 //******************************pid参数配置**********************************
-    PID_Init(&TracePID,  0.08f, 0.0f,  0.005f,  100.0f,  0.0f);    // 图像→角度
+    PID_Init(&TracePID,  0.2f, 0.0f,  0.0f,  1000.0f,  0.0f);    // 图像→角度  0.5f, 0.5f,  0.05f
     PID_Init(&AnglePID,  0.0005f, 0.0f,  0.0f,  1.0f,  0.0f);    // 角速度环
-    PID_Init(&Speed_lPID,  1000.0f, 0.01f,  0.0f,  1500.0f,   100.0f);    // 速度环
-    PID_Init(&Speed_rPID,  1000.0f, 0.01f,  0.0f,  1500.0f,   100.0f);    // 速度环
-    PID_Init(&Delta_SpPID,  2000.0f, 0.1f,  0.0f,  1500.0f,   150.0f);    // 差速环
+    PID_Init(&Speed_lPID,  2200.0f, 2.0f,  0.0f,  1500.0f,   100.0f);    // 速度环
+    PID_Init(&Speed_rPID,  2200.0f, 2.0f,  0.0f,  1500.0f,   100.0f);    // 速度环
+    PID_Init(&Delta_SpPID,  6000.0f, 1.8f,  0.0f,  1500.0f,   150.0f);    // 差速环
 
 //******************************主循环**********************************
-
+while(1)
+{
+    Mahony_update();
+    if(Is_Mahony_Ready())
+    {
             while(1)
             {
                 if(uvc_dev.wait_image_refresh() == 0)
                 {
-                    system_delay_ms(10);
+                    //system_delay_ms(10);
                     
-                    if (t == 200)
-                        target_lspeed = target_rspeed = 0.5;
-                    t++;  
+                    //if (t == 200)
+                    //    target_lspeed = target_rspeed = 0.5;
+                   // t++;  
                     // if (t == 40)
                     // {
                     //     target_lspeed = 13;
                     //     target_rspeed = 11;
                     // }
                         //target_lspeed = target_rspeed = 16;
-                    if (t == 650)
-                    {
-                        t = 0;
-                        target_lspeed = target_rspeed = 0;
-                    }
+                    //if (t == 650)
+                    //{
+                    //    t = 0;
+                    //    target_lspeed = target_rspeed = 0.0;
+                    //}
                     //line_follow_pid_control(); //pid控制
                     printf("samples:%f, %f, %f, %f\n", target_lspeed, target_rspeed, current_lspeed, current_rspeed);//调试输出用
-                    //image_process();
+                    //printf("samples:%f, %f, %f\n", PWM_l, PWM_r, PWM_delta);//调试输出用
+                    image_process();
+                    //printf("yaw:%f\n",eulerAngle.yaw_cont);
+                    Mahony_update();
                 } 
 /*
                 float v_left  = get_left_speed_mps();
@@ -123,4 +130,6 @@ int main(int, char**)
  //  printf("steer:%f",get_steer());
  //  printf("target_angle:%f",get_target_angle());
             }
+        }
+    }
     }
